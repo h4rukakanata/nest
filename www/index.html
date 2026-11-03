@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nest</title>
+<style>
+:root{--bg:#f6f1ec;--card:#fffaf5;--tx:#2d2630;--mu:#8a7f8c;--ac:#e07a9b;--ln:#0000001a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17141c;--card:#221e2a;--tx:#f0eaf3;--mu:#9a90a3;--ln:#ffffff1f}}
+:root[data-theme="dark"]{--bg:#17141c;--card:#221e2a;--tx:#f0eaf3;--mu:#9a90a3;--ln:#ffffff1f}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 "DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;transition:background .3s}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+.wrap{max-width:900px;margin:0 auto;padding:14px 14px 90px}
+header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+h1{font:600 24px "Fraunces",Georgia,serif;margin:0;flex:1;letter-spacing:-.5px}
+h1 span{color:var(--ac)}
+.sync{font-size:11px;color:var(--mu)}
+nav{display:flex;gap:6px;background:var(--card);padding:5px;border-radius:16px;margin-bottom:16px;overflow-x:auto;border:1px solid var(--ln)}
+nav button{flex:1;border:0;background:none;color:var(--mu);padding:9px 12px;border-radius:12px;font:inherit;font-weight:600;cursor:pointer;white-space:nowrap}
+nav button.on{background:var(--ac);color:#fff}
+.card{background:var(--card);border:1px solid var(--ln);border-radius:20px;padding:14px;margin-bottom:12px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+input,textarea,select{font:inherit;color:var(--tx);background:transparent;border:1px solid var(--ln);border-radius:12px;padding:9px 11px;width:100%}
+input[type=color]{padding:0;width:34px;height:34px;border-radius:50%;border:2px solid var(--ln);cursor:pointer;background:none}
+input[type=checkbox]{width:20px;height:20px;accent-color:var(--ac);flex:none}
+button.b{border:0;background:var(--ac);color:#fff;border-radius:12px;padding:9px 14px;font:inherit;font-weight:600;cursor:pointer}
+button.g{border:1px solid var(--ln);background:none;color:var(--tx);border-radius:12px;padding:8px 12px;font:inherit;cursor:pointer}
+button.x{border:0;background:none;color:var(--mu);cursor:pointer;font-size:16px}
+.row{display:flex;gap:8px;align-items:center}.row>*{min-width:0}
+.item{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--ln)}
+.item span{flex:1;word-break:break-word}.done span{text-decoration:line-through;color:var(--mu)}
+.lh{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.lh input[type=text]{border:0;font:600 17px "Fraunces",Georgia,serif;padding:2px}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.big{font:600 56px/1 "Fraunces",Georgia,serif;text-align:center;margin:16px 0;font-variant-numeric:tabular-nums}
+.seg{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.seg button{flex:1}.seg .g.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal div{aspect-ratio:1;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:13px;cursor:pointer;gap:3px}
+.cal .h{aspect-ratio:auto;color:var(--mu);font-size:11px;cursor:default}
+.cal .sel{background:var(--ac);color:#fff}.cal .today{border:1.5px solid var(--ac)}
+.dots{display:flex;gap:3px;height:6px}.dots i{width:6px;height:6px;border-radius:50%}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.two{grid-template-columns:1fr}}
+.sw{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sw button{width:30px;height:30px;border-radius:50%;border:2px solid var(--ln);cursor:pointer}
+.mu{color:var(--mu);font-size:13px}.due{color:var(--ac);font-weight:600;font-size:12px}
+.hide{display:none}
+</style></head><body><div class="wrap" id="app"></div>
+<script>
+const $=s=>document.querySelector(s),uid=()=>Math.random().toString(36).slice(2,9);
+const PAL=[["Blush","#f6f1ec","#fffaf5","#2d2630","#e07a9b"],["Sage","#eef2ea","#f9fbf6","#243024","#6b9a6f"],["Sky","#eaf1f7","#f7fbff","#1f2b38","#4a8fd1"],["Lavender","#f1edf8","#faf8fe","#2a2236","#9b7fe0"],["Peach","#fbefe6","#fffaf5","#38261c","#ee8b5a"],["Mint","#e8f5f1","#f6fcfa","#1c332e","#3fb8af"],["Sand","#f3eee3","#fcf9f2","#33291c","#b98f4a"],["Dusk","#17141c","#221e2a","#f0eaf3","#b48cf2"],["Mocha","#1e1814","#2a221c","#f3e9de","#d9915a"],["Midnight","#0e1420","#172033","#e6ecf7","#5aa2f5"],["Rose Noir","#1a1216","#261a20","#f7e9ee","#f0709a"],["Forest","#101a14","#19271f","#e6f2ea","#6fcf8f"]];
+const BGS=["#f6f1ec","#eef2ea","#eaf1f7","#f5ecf8","#fdf0e6","#e9f5f0","#ffffff","#17141c","#0e1420","#1e1814","#10131a","#000000"];
+const COLS=["#e07a9b","#f2a65a","#e8c547","#6b9a6f","#4a8fd1","#b48cf2","#8a7f8c","#e5635d","#3fb8af","#7bc96f","#f08fc0","#5b6ee1"];
+let S={v:1,th:{p:0,ac:null,bg:null},lists:[{id:uid(),n:"Today",c:COLS[0],it:[]}],cal:[],notes:[],dn:{},ns:[{id:"sc",n:"School"},{id:"ho",n:"Home"},{id:"id",n:"Ideas"}],ts:0};
+let nsel="all",tab="lists",sel=new Date().toISOString().slice(0,10),mon=new Date(sel.slice(0,7)+"-01T00:00"),tm="timer",status="local",ref=null,uidv=null,lastTs=0,saveT=null,editing=false;
+const T={timer:{left:300,run:false,set:300},pomo:{ph:"focus",left:1500,run:false,n:0,f:25,b:5},sw:{ms:0,run:false,laps:[],at:0}};
+function norm(){S.dn=S.dn||{};S.ns=S.ns||[{id:"sc",n:"School"},{id:"ho",n:"Home"},{id:"id",n:"Ideas"}]}
+function save(){S.ts=Date.now();lastTs=S.ts;try{localStorage.setItem("nest",JSON.stringify(S))}catch(e){}
+ clearTimeout(saveT);saveT=setTimeout(sched,800)}
+const LN=window.Capacitor&&Capacitor.Plugins?Capacitor.Plugins.LocalNotifications:null;
+async function notifOK(){if(!LN)return false;try{let p=await LN.checkPermissions();if(p.display!=="granted")p=await LN.requestPermissions();if(p.display==="granted"){try{await LN.createChannel({id:"nest",name:"Nest reminders",importance:5,visibility:1,vibration:true})}catch(e){}return true}}catch(e){}return false}
+async function sched(){if(!LN)return;try{const now=Date.now(),L=[];let id=1;
+ S.notes.forEach(n=>{if(n.r){const t=new Date(n.r);if(t>now)L.push({id:id++,title:n.t||"Reminder",body:n.b||"",schedule:{at:t,allowWhileIdle:true}})}});
+ S.cal.forEach(e=>{if(e.tm){const t=new Date(e.d+"T"+e.tm);if(t>now)L.push({id:id++,title:e.t,body:(e.s==="school"?"School":"Home")+" · "+e.tm,schedule:{at:t,allowWhileIdle:true}})}});
+ const a=T.timer;if(a.run&&a.end>now)L.push({id:9000,title:"Timer done",body:"Nest",schedule:{at:new Date(a.end),allowWhileIdle:true}});
+ const p=T.pomo;if(p.run&&p.end>now){let t=p.end,ph=p.ph;for(let k=0;k<8;k++){L.push({id:9100+k,title:ph==="focus"?"Focus done · break time":"Break over · back to focus",body:"Nest",schedule:{at:new Date(t),allowWhileIdle:true}});ph=ph==="focus"?"break":"focus";t+=(ph==="focus"?p.f:p.b)*60000}}
+ const pend=await LN.getPending();if(pend.notifications.length)await LN.cancel({notifications:pend.notifications.map(n=>({id:n.id}))});
+ L.forEach(n=>n.channelId="nest");
+ if(L.length&&await notifOK())await LN.schedule({notifications:L})}catch(e){}}
+function stat(){const e=$("#st");if(e)e.textContent="saved on this device"}
+function theme(){const p=PAL[S.th.p]||PAL[0],r=document.documentElement.style,bg=S.th.bg||p[1],custom=!!S.th.bg;
+ const L=h=>{const n=parseInt(h.slice(1),16);return(.299*(n>>16)+.587*(n>>8&255)+.114*(n&255))/255},dark=L(bg)<.5;
+ document.documentElement.dataset.theme=dark?"dark":"light";
+ r.setProperty("--bg",bg);r.setProperty("--card",custom?`color-mix(in srgb,${bg} ${dark?85:40}%,#fff)`:p[2]);
+ r.setProperty("--tx",custom?(dark?"#f0eaf3":"#2d2630"):p[3]);r.setProperty("--ac",S.th.ac||p[4]);
+ r.setProperty("--mu",dark?"#9a90a3":"#8a7f8c");r.setProperty("--ln",dark?"#ffffff1f":"#0000001a")}
+const fmt=s=>{s=Math.max(0,Math.round(s));return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")};
+const fsw=ms=>{const c=Math.floor(ms/10)%100,s=Math.floor(ms/1000)%60,m=Math.floor(ms/60000);return String(m).padStart(2,"0")+":"+String(s).padStart(2,"0")+"."+String(c).padStart(2,"0")};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function beep(){try{const a=new (window.AudioContext||window.webkitAudioContext)(),o=a.createOscillator();o.connect(a.destination);o.frequency.value=660;o.start();setTimeout(()=>o.stop(),350)}catch(e){}}
+function sw(cur,cb){return `<div class="sw">${COLS.map(c=>`<button style="background:${c}" data-sw="${c}" data-cb="${cb}"></button>`).join("")}<input type="color" value="${cur}" data-pick="${cb}"></div>`}
+
+function render(){theme();const a=$("#app");
+ a.innerHTML=`<header><h1>nest<span>.</span></h1><span class="sync" id="st"></span></header>
+ <nav>${[["lists","Lists"],["time","Timers"],["plan","Planner"],["notes","Notes"],["look","Look"]].map(([k,l])=>`<button class="${tab===k?"on":""}" data-tab="${k}">${l}</button>`).join("")}</nav><div id="main"></div>`;
+ stat();main()}
+function main(){const m=$("#main");m.innerHTML=({lists:vLists,time:vTime,plan:vPlan,notes:vNotes,look:vLook})[tab]()}
+
+function vLists(){return `<div class="row" style="margin-bottom:12px"><input id="nl" placeholder="New list name…"><button class="b" data-a="addList">Add</button></div>
+<div class="grid">${S.lists.map(l=>`<div class="card" style="border-top:4px solid ${l.c}"><div class="lh"><span class="dot" style="background:${l.c}"></span><input value="${esc(l.e||"")}" placeholder="🙂" maxlength="4" data-le="${l.id}" style="width:46px;text-align:center;padding:4px">
+<input type="text" value="${esc(l.n)}" data-ln="${l.id}"><span class="mu">${l.it.filter(i=>i.d).length}/${l.it.length}</span><button class="x" data-a="delList" data-id="${l.id}">✕</button></div>
+${l.it.map(i=>`<div class="item ${i.d?"done":""}"><input type="checkbox" ${i.d?"checked":""} data-chk="${l.id}|${i.id}"><span>${esc(i.t)}</span><button class="x" data-a="delItem" data-id="${l.id}|${i.id}">✕</button></div>`).join("")}
+<div class="row" style="margin-top:10px"><input placeholder="Add task…" data-add="${l.id}"></div>
+<details style="margin-top:10px"><summary class="mu" style="cursor:pointer">List colour</summary>${sw(l.c,"l:"+l.id)}</details></div>`).join("")}</div>`}
+
+function vTime(){const t=T[tm]; let body="";
+ if(tm==="timer")body=`<div class="big" id="disp">${fmt(t.left)}</div><div class="seg">${[1,5,10,15,30,60].map(m=>`<button class="g" data-a="tset" data-id="${m}">${m}m</button>`).join("")}</div>
+ <div class="row"><input type="number" id="cm" placeholder="Custom minutes" min="1"><button class="g" data-a="tcustom">Set</button></div>`;
+ if(tm==="pomo")body=`<div class="mu" style="text-align:center" id="pph">${t.ph==="focus"?"Focus":"Break"} · round ${t.n+1}</div><div class="big" id="disp">${fmt(t.left)}</div>
+ <div class="row"><label class="mu">Focus min</label><input type="number" min="1" value="${t.f}" data-pf="f"><label class="mu">Break min</label><input type="number" min="1" value="${t.b}" data-pf="b"></div>`;
+ if(tm==="sw")body=`<div class="big" id="disp">${fsw(t.ms)}</div><div id="laps">${t.laps.map((l,i)=>`<div class="item"><span>Lap ${i+1}</span><span class="mu" style="flex:none">${fsw(l)}</span></div>`).reverse().join("")}</div>`;
+ return `<div class="seg">${[["timer","Countdown"],["pomo","Pomodoro"],["sw","Stopwatch"]].map(([k,l])=>`<button class="g ${tm===k?"on":""}" data-tm="${k}">${l}</button>`).join("")}</div>
+ <div class="card">${body}<div class="row" style="margin-top:14px"><button class="b" style="flex:1" id="go" data-a="tgo">${t.run?"Pause":"Start"}</button>${tm==="sw"?`<button class="g" data-a="lap">Lap</button>`:""}<button class="g" data-a="treset">Reset</button></div></div>`}
+
+function vPlan(){const y=mon.getFullYear(),mo=mon.getMonth(),first=mon.getDay(),n=new Date(y,mo+1,0).getDate(),today=new Date().toISOString().slice(0,10);
+ let cells=["S","M","T","W","T","F","S"].map(d=>`<div class="h">${d}</div>`).join("")+"<div></div>".repeat(first);
+ for(let d=1;d<=n;d++){const k=`${y}-${String(mo+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`,ev=S.cal.filter(e=>e.d===k),sc=ev.some(e=>e.s==="school"),hm=ev.some(e=>e.s==="home");
+  cells+=`<div class="${k===sel?"sel":""} ${k===today?"today":""}" data-day="${k}">${d}<span class="dots"><i style="background:${sc?"#4a8fd1":"transparent"}"></i><i style="background:${hm?"#e07a9b":"transparent"}"></i><i style="background:${S.dn[k]?"var(--mu)":"transparent"}"></i></span></div>`}
+ const col=s=>{const ev=S.cal.filter(e=>e.d===sel&&e.s===s);return `<div class="card" style="border-top:4px solid ${s==="school"?"#4a8fd1":"#e07a9b"}"><b>${s==="school"?"📚 School":"🏡 Home"}</b>
+ ${ev.map(e=>`<div class="item ${e.x?"done":""}"><input type="checkbox" ${e.x?"checked":""} data-ce="${e.id}"><span>${e.tm?`<span class="mu">${e.tm} </span>`:""}${esc(e.t)}</span><button class="x" data-a="gcal" data-id="${e.id}" title="Add to Google Calendar">📅</button><button class="x" data-a="delEv" data-id="${e.id}">✕</button></div>`).join("")||`<div class="mu" style="padding:8px 0">Nothing yet</div>`}
+ <div class="row" style="margin-top:8px"><input type="time" style="width:110px" data-et="${s}"><input placeholder="Add…" data-ev="${s}"></div></div>`};
+ return `<div class="card"><div class="row" style="justify-content:space-between;margin-bottom:10px"><button class="g" data-a="pm">‹</button><b>${mon.toLocaleString("en",{month:"long",year:"numeric"})}</b><button class="g" data-a="nm">›</button></div><div class="cal">${cells}</div>
+ <div class="mu" style="margin-top:8px"><span class="dot" style="background:#4a8fd1"></span> school &nbsp;<span class="dot" style="background:#e07a9b"></span> home &nbsp;<span class="dot" style="background:var(--mu)"></span> day notes</div></div>
+ <div class="mu" style="margin:4px 4px 8px">${new Date(sel+"T00:00").toLocaleDateString("en",{weekday:"long",month:"long",day:"numeric"})}</div><div class="two">${col("school")}${col("home")}</div>
+ <div class="card"><b>📝 Notes for this day</b><textarea rows="3" data-dn="${sel}" placeholder="Anything for this day…" style="margin-top:8px">${esc(S.dn[sel]||"")}</textarea></div>`}
+
+function vNotes(){const now=new Date().toISOString().slice(0,16),ss=S.ns,nm=id=>(ss.find(s=>s.id===id)||{}).n;
+ const list=S.notes.filter(n=>nsel==="all"||n.s===nsel).sort((a,b)=>(a.r||"9")<(b.r||"9")?-1:1);
+ return `<div class="seg" style="margin-bottom:8px"><button class="g ${nsel==="all"?"on":""}" data-ns="all">All</button>${ss.map(s=>`<button class="g ${nsel===s.id?"on":""}" data-ns="${s.id}">${esc(s.n)}</button>`).join("")}<button class="g" data-a="addSec">＋ Section</button></div>
+ ${nsel!=="all"?`<div class="row" style="margin-bottom:10px"><input value="${esc(nm(nsel)||"")}" data-sn="${nsel}"><button class="g" data-a="delSec" data-id="${nsel}">Delete section</button></div>`:""}
+ <div class="card"><input id="nt" placeholder="Title"><textarea id="nb" rows="3" placeholder="Note…" style="margin-top:8px"></textarea>
+ <div class="row" style="margin-top:8px"><select id="ns" style="width:auto">${ss.map(s=>`<option value="${s.id}" ${nsel===s.id?"selected":""}>${esc(s.n)}</option>`).join("")}</select><input type="datetime-local" id="nr"><button class="b" data-a="addNote">Save</button></div><div class="mu" style="margin-top:6px">Set a date and time to get a reminder notification.</div></div>
+ <div class="grid">${list.map(n=>`<div class="card"><div class="row"><b style="flex:1">${esc(n.t||"Untitled")}</b><button class="x" data-a="delNote" data-id="${n.id}">✕</button></div>${nm(n.s)?`<div class="mu">${esc(nm(n.s))}</div>`:""}
+ <div style="white-space:pre-wrap;margin:6px 0">${esc(n.b)}</div>${n.r?`<div class="${n.r<=now?"due":"mu"}">⏰ ${n.r.replace("T"," ")}${n.r<=now?" · due":""}</div>`:""}</div>`).join("")}</div>`}
+
+function vLook(){const ac=S.th.ac||PAL[S.th.p][4];return `<div class="card"><b>Palette</b><div class="sw" style="margin-top:10px">${PAL.map((p,i)=>`<button style="background:linear-gradient(135deg,${p[1]} 50%,${p[4]} 50%)" data-pal="${i}" title="${p[0]}"></button>`).join("")}</div></div>
+ <div class="card"><b>Accent colour</b><div style="margin-top:10px">${sw(ac,"ac")}</div></div>
+ <div class="card"><b>Background</b><div class="sw" style="margin-top:10px">${BGS.map(c=>`<button style="background:${c}" data-sw="${c}" data-cb="bg"></button>`).join("")}<input type="color" value="${S.th.bg||PAL[S.th.p][1]}" data-pick="bg"><button class="g" data-a="resetTheme">Reset</button></div></div>
+ <div class="card"><b>Notifications</b><div class="mu" style="margin:6px 0 10px">Reminders, timed events and timers can notify you with sound even when the app is closed.</div><button class="b" data-a="notif">Enable and send a test</button><div class="mu" id="nm" style="margin-top:6px"></div></div>
+ <div class="card"><b>Move your data</b><div class="mu" style="margin:6px 0 10px">Export copies everything as text. Paste it into Import on another device. Import replaces what is on this device.</div>
+ <textarea id="ie" rows="4" placeholder="Paste exported text here to import…"></textarea>
+ <div class="row" style="margin-top:8px"><button class="b" data-a="exp">Export</button><button class="g" data-a="imp">Import</button></div><div class="mu" id="im" style="margin-top:6px"></div></div>`}
+
+function tick(){const now=Date.now();
+ if(T.timer.run){T.timer.left=T.timer.end-now>0?(T.timer.end-now)/1000:0;if(!T.timer.left){T.timer.run=false;beep();if(tab==="time")main()}}
+ if(T.pomo.run){T.pomo.left=T.pomo.end-now>0?(T.pomo.end-now)/1000:0;if(!T.pomo.left){beep();const p=T.pomo;if(p.ph==="focus"){p.ph="break";p.left=p.b*60}else{p.ph="focus";p.n++;p.left=p.f*60}p.end=Date.now()+p.left*1000;if(tab==="time")main()}}
+ if(T.sw.run)T.sw.ms=now-T.sw.at;
+ const d=$("#disp");if(d&&tab==="time")d.textContent=tm==="sw"?fsw(T.sw.ms):fmt(T[tm].left)}
+setInterval(tick,100);
+
+document.addEventListener("click",e=>{const t=e.target.closest("button,.cal div");if(!t)return;const D=t.dataset;
+ if(D.tab){tab=D.tab;return render()}
+ if(D.ns){nsel=D.ns;return main()}
+ if(D.tm){tm=D.tm;return main()}
+ if(D.day){sel=D.day;return main()}
+ if(D.pal){S.th={p:+D.pal,ac:null,bg:null};save();return render()}
+ if(D.sw){return setCol(D.cb,D.sw)}
+ const[id,id2]=(D.id||"").split("|"),a=D.a;if(!a)return;
+ if(a==="addList"){const v=$("#nl").value.trim();if(v){S.lists.push({id:uid(),n:v,c:COLS[S.lists.length%COLS.length],it:[]});save();main()}}
+ if(a==="delList"&&confirm("Delete this list?")){S.lists=S.lists.filter(l=>l.id!==id);save();main()}
+ if(a==="delItem"){const l=S.lists.find(l=>l.id===id);l.it=l.it.filter(i=>i.id!==id2);save();main()}
+ if(a==="tset"){const p=T.timer;p.run=false;p.set=p.left=id*60;sched();main()}
+ if(a==="tcustom"){const v=+$("#cm").value;if(v>0){T.timer.run=false;T.timer.set=T.timer.left=v*60;sched();main()}}
+ if(a==="tgo"){const p=T[tm];if(tm==="sw"){p.run=!p.run;if(p.run)p.at=Date.now()-p.ms}else{p.run=!p.run;if(p.run)p.end=Date.now()+p.left*1000;sched()}main()}
+ if(a==="lap"&&T.sw.run){T.sw.laps.push(T.sw.ms);main()}
+ if(a==="treset"){const p=T[tm];p.run=false;if(tm==="sw"){p.ms=0;p.laps=[]}else if(tm==="timer")p.left=p.set;else{p.ph="focus";p.n=0;p.left=p.f*60}sched();main()}
+ if(a==="pm"){mon=new Date(mon.getFullYear(),mon.getMonth()-1,1);main()}
+ if(a==="nm"){mon=new Date(mon.getFullYear(),mon.getMonth()+1,1);main()}
+ if(a==="delEv"){S.cal=S.cal.filter(x=>x.id!==id);save();main()}
+ if(a==="addNote"){const t=$("#nt").value.trim(),b=$("#nb").value.trim();if(t||b){S.notes.push({id:uid(),t,b,r:$("#nr").value,s:$("#ns").value});save();main()}}
+ if(a==="delNote"){S.notes=S.notes.filter(n=>n.id!==id);save();main()}
+ if(a==="exp"){const v=JSON.stringify(S);$("#ie").value=v;try{navigator.clipboard.writeText(v)}catch(e){}$("#im").textContent="Copied. Paste it into Import on your other device."}
+ if(a==="imp"){try{const n=JSON.parse($("#ie").value);if(n&&n.lists&&confirm("Replace everything on this device?")){S=n;norm();S.ts=Date.now();save();render()}else $("#im").textContent="That does not look like Nest data."}catch(e){$("#im").textContent="Could not read that. Paste the full text."}}
+ if(a==="addSec"){const n=prompt("Section name?");if(n&&n.trim()){const i=uid();S.ns.push({id:i,n:n.trim()});nsel=i;save();main()}}
+ if(a==="delSec"&&confirm("Delete this section? Its notes move to All.")){S.ns=S.ns.filter(s=>s.id!==id);S.notes.forEach(n=>{if(n.s===id)n.s=""});nsel="all";save();main()}
+ if(a==="notif"){(async()=>{const ok=await notifOK();$("#nm").textContent=ok?"Enabled. A test will arrive in about 5 seconds.":"Notifications are blocked. Allow them for Nest in Android settings.";if(ok)try{await LN.schedule({notifications:[{id:9999,title:"Nest",body:"Test notification",channelId:"nest",schedule:{at:new Date(Date.now()+5000),allowWhileIdle:true}}]})}catch(e){}})()}
+ if(a==="gcal"){const e2=S.cal.find(x=>x.id===id);if(e2){const q=n=>String(n).padStart(2,"0"),f=x=>x.getFullYear()+q(x.getMonth()+1)+q(x.getDate())+"T"+q(x.getHours())+q(x.getMinutes())+"00";let dt;if(e2.tm){const st=new Date(e2.d+"T"+e2.tm);dt=f(st)+"/"+f(new Date(st.getTime()+3600000))}else{const nx=new Date(e2.d+"T00:00");nx.setDate(nx.getDate()+1);dt=e2.d.replace(/-/g,"")+"/"+nx.getFullYear()+q(nx.getMonth()+1)+q(nx.getDate())}
+  window.open("https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent(e2.t)+"&dates="+dt+"&details="+encodeURIComponent(e2.s==="school"?"School":"Home"),"_blank")}}
+ if(a==="resetTheme"){S.th={p:S.th.p,ac:null,bg:null};save();render()}});
+function setCol(cb,c){if(cb.startsWith("l:")){S.lists.find(l=>l.id===cb.slice(2)).c=c;save();main()}else{S.th[cb]=c;save();theme()}}
+document.addEventListener("input",e=>{const D=e.target.dataset;
+ if(D.pick){setCol(D.pick,e.target.value)}
+ if(D.le){S.lists.find(l=>l.id===D.le).e=e.target.value;save()}
+ if(D.dn){S.dn[D.dn]=e.target.value;if(!e.target.value)delete S.dn[D.dn];save()}
+ if(D.sn){S.ns.find(s=>s.id===D.sn).n=e.target.value;save()}
+ if(D.ln){S.lists.find(l=>l.id===D.ln).n=e.target.value;save()}
+ if(D.pf){T.pomo[D.pf]=Math.max(1,+e.target.value||1);if(!T.pomo.run&&T.pomo.ph==="focus"&&D.pf==="f")T.pomo.left=T.pomo.f*60}});
+document.addEventListener("change",e=>{const D=e.target.dataset;
+ if(D.chk){const[l,i]=D.chk.split("|");const it=S.lists.find(x=>x.id===l).it.find(x=>x.id===i);it.d=e.target.checked;save();main()}
+ if(D.ce){const ev=S.cal.find(x=>x.id===D.ce);ev.x=e.target.checked;save();main()}});
+document.addEventListener("keydown",e=>{if(e.key!=="Enter")return;const D=e.target.dataset,v=e.target.value.trim();
+ if(D.add&&v){S.lists.find(l=>l.id===D.add).it.push({id:uid(),t:v,d:false});save();main();document.querySelector(`[data-add="${D.add}"]`)?.focus()}
+ if(D.ev&&v){const tm=document.querySelector(`[data-et="${D.ev}"]`).value;S.cal.push({id:uid(),d:sel,s:D.ev,t:v,tm,x:false});save();main()}
+ if(e.target.id==="nl"){document.querySelector('[data-a="addList"]').click()}});
+
+function adopt(j){try{const n=JSON.parse(j);if(n&&n.ts>lastTs){S=n;lastTs=n.ts;if(!document.activeElement||!/INPUT|TEXTAREA/.test(document.activeElement.tagName))render()}}catch(e){}}
+try{const l=localStorage.getItem("nest");if(l){S=JSON.parse(l);lastTs=S.ts||0}}catch(e){}
+norm();render();sched();
+</script></body></html>
